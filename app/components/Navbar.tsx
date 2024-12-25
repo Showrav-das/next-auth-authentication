@@ -49,6 +49,13 @@ export default function Navbar() {
               </p>
             </Link>
           </div>
+          <div className="hidden md:flex items-center space-x-1">
+            <Link href="/signin">
+              <p className="py-2 px-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-300">
+                Sign In
+              </p>
+            </Link>
+          </div>
 
           {/* Mobile Button */}
           <div className="md:hidden flex items-center">

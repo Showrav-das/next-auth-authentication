@@ -1,9 +1,22 @@
+import { NextResponse } from "next/server";
+import { connectToDatabase } from "../libs/mongodb";
+import bcrypt from "bcryptjs";
+import { createUser } from "./usersAction";
+
 export const registrationUser = async (formData) => {
-    const {username, email, password} = formData;
-  await fetch("/api/auth/signup", {
+  const { username, email, password } = formData;
+  const response = await fetch(`/api/register`, {
     method: "POST",
-    body: JSON.stringify({username, email, password}),
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      username,
+      email,
+      password,
+    }),
   });
-  console.log(formData);
+
+  console.log("res:", response);
+  return response;
 };

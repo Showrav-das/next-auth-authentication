@@ -1,14 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { registrationUser } from "../server/authenticationServerAction";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
-export default function RegistrationForm() {
+export default function page() {
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const router = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,13 +18,17 @@ export default function RegistrationForm() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      console.log("passwords do not match");
-      return;
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
+    if (res.ok) {
+      console.log("Login successful!");
+    } else {
+      alert("Error logging in");
     }
-    const res = await registrationUser(formData);
-    res.status === 201 && router.push("/signin");
-    console.log("after submission", formData);
+    // console.log("after submission", formData);
   };
 
   return (
@@ -36,25 +38,6 @@ export default function RegistrationForm() {
           Create Account
         </h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* <!-- Username Input --> */}
-          <div className="relative">
-            <input
-              defaultValue={formData.username}
-              onChange={handleChange}
-              type="text"
-              name="username"
-              id="username"
-              required
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors peer"
-            />
-            <label
-              htmlFor="username"
-              className="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:text-orange-500 left-1"
-            >
-              Username
-            </label>
-          </div>
-
           {/* <!-- Email Input --> */}
           <div className="relative">
             <input
@@ -94,31 +77,13 @@ export default function RegistrationForm() {
               Password
             </label>
           </div>
-          <div className="relative">
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              defaultValue={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors peer"
-              placeholder=" "
-            />
-            <label
-              htmlFor="confirmPassword"
-              className="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-75 peer-focus:text-orange-500 left-1"
-            >
-              Confirm Password
-            </label>
-          </div>
 
           {/* <!-- Submit Button --> */}
           <button
             type="submit"
             className="w-full bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
-            Register
+            Sign In
           </button>
         </form>
       </div>
