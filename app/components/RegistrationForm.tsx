@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { registrationUser } from "../server/authenticationServerAction";
 
 export default function RegistrationForm() {
   const [formData, setFormData] = useState({
@@ -16,12 +17,13 @@ export default function RegistrationForm() {
       [name]: value,
     });
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       console.log("passwords do not match");
       return;
     }
+    await registrationUser(formData);
     console.log("after submission", formData);
   };
 
