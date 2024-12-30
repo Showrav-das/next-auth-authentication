@@ -4,9 +4,8 @@ import { z } from "zod";
 // import crypto from "crypto";
 import { User } from "@/models/user";
 import connectDB from "@/lib/db";
-// import { User } from "@/models/user";
-// import connectDB from "@/lib/db";
-// import { sendVerificationEmail } from "@/lib/mail";
+import jwt from "jsonwebtoken";
+import { sendVerificationEmail } from "@/lib/email";
 
 // Validation schema
 const registerSchema = z.object({
@@ -36,9 +35,13 @@ export async function POST(req: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(body.password, 12);
 
-    // Generate verification token
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-    console.log("verificationToken", verificationToken);
+    let secretKey = process.env.JWT_SECRET_KEY;
+
+    const verificationToken = jwt.sign(
+      { email: body.email, exp: Math.floor(Date.now() / 1000) + 60 * 2 },
+      secretKey as string
+    );
+
     // Create user
     const user = await User.create({
       name: body.name,
@@ -47,6 +50,8 @@ export async function POST(req: Request) {
       emailVerified: false,
       verificationToken,
     });
+
+    await sendVerificationEmail(body?.email, verificationToken);
 
     // Send verification email
     // await sendVerificationEmail(body.email, verificationToken);
@@ -59,13 +64,6 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

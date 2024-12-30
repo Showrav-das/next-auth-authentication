@@ -46,14 +46,14 @@ export function LoginForm() {
         password: values.password,
         redirect: false,
       });
-
+      console.log("result", result);
       if (result?.error) {
         toast({
           variant: "destructive",
           title: "Error",
           description: result.error,
         });
-        
+
         return;
       }
 
@@ -94,9 +94,12 @@ export function LoginForm() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-xl mx-auto">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-xl mx-auto">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 max-w-xl mx-auto"
+        >
           <FormField
             control={form.control}
             name="email"
