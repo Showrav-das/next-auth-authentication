@@ -3,9 +3,10 @@ import { connectToDatabase } from "../libs/mongodb";
 import bcrypt from "bcryptjs";
 import { createUser } from "./usersAction";
 
-export const registrationUser = async (formData) => {
+export const registrationUser = async (formData: any) => {
   const { username, email, password } = formData;
-  const response = await fetch(`/api/register`, {
+
+  const response = await fetch(`/api/signup`, {
     method: "POST",
     headers: {
       "content-type": "application/json",

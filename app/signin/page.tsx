@@ -1,14 +1,15 @@
 "use client";
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import React, { useState } from "react";
+import { signinAction } from "../libs/actions";
 
 export default function page() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const router = useRouter();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -18,15 +19,15 @@ export default function page() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: formData.email,
-      password: formData.password,
-    });
-    if (res.ok) {
-      console.log("Login successful!");
-    } else {
-      alert("Error logging in");
+    try {
+      const response = await signinAction(formData);
+      if (response) {
+        router.push("/protect");
+      } else {
+        console.log("first");
+      }
+    } catch (error) {
+      console.log("show error", error);
     }
     // console.log("after submission", formData);
   };
