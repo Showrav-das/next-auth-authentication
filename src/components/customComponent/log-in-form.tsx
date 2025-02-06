@@ -40,13 +40,13 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(formData: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true);
-      console.log("values", values);
+      console.log("formData", formData);
       const result = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
+        email: formData.email,
+        password: formData.password,
         redirect: false,
       });
       console.log("result", result);
